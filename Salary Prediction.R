@@ -1,0 +1,37 @@
+getwd()
+setwd("/Users/tinapraveen/desktop")
+dfp<-read.csv("train_salaries.csv", header=TRUE,sep=',')
+library(dplyr)
+dfp<-unique(dfp)
+dfpfeature<-read.csv("train_features.csv", header=TRUE,sep=',')
+dfpfeature<-unique(dfpfeature)
+dffull<-merge(dfp,dfpfeature)
+# MLR
+model1<-lm(salary~jobType+degree+major+industry+yearsExperience+milesFromMetropolis,data=dffull)
+summary(model1)
+train_MSE = mean(model1$residuals^2)
+train_MSE
+test_set<-read.csv("test_features.csv", header=TRUE,sep=',')
+unique(dffull$jobType)
+unique(test_set$jobType)
+typeof(dffull$jobType)
+typeof(test_set$jobType)
+test_set<-test_set[ ! test_set$jobType %in% c(11,12,5,6,4.3), ]
+sapply(dffull, class)
+sapply(test_set, class)
+unique(dffull$jobType)
+unique(dffull$degree)
+unique(dffull$major)
+unique(dffull$industry)
+unique(dffull$yearsExperience)
+unique(dffull$milesFromMetropolis)
+
+#MLR-interactions
+model2<-lm(salary~jobType+degree+jobTypendegree+industry+yearsExperience+milesFromMetropolis,data=dffull)
+summary(model2)
+jobTypendegree<-interaction(dffull$jobType,dffull$degree, sep = ":")
+model3<-aov(salary~jobType+degree+jobTypendegree+major+industry+yearsExperience+milesFromMetropolis,data=dffull)
+summary(model3)
+train_MSE = mean(model3$residuals^2)
+train_MSE
+chisq.test(dffull$jobType, dffull$degree, correct=FALSE)
